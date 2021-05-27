@@ -1,0 +1,8 @@
+AzureActivity
+| where TimeGenerated > ago(7d)
+| where ResourceProvider contains "Microsoft.Compute" and OperationName == "Create or Update Disk"
+| where HTTPRequest contains "PUT"
+| project Disk_Name = Resource, Created_On = format_datetime(EventSubmissionTimestamp, 'dd-MM-yyyy'), Created_By = Caller
+| distinct Created_On, Disk_Name, Created_By
+| summarize count() by Created_On, substring(Disk_Name,0,16)
+| sort by Created_On asc

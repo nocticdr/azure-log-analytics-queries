@@ -1,0 +1,7 @@
+AzureActivity
+| where TimeGenerated > ago(7d)
+| where ResourceProvider contains "Microsoft.Compute" and OperationName == "Create or Update Virtual Machine"
+| where HTTPRequest contains "PUT"
+| project VMName = Resource, Created_On = format_datetime(EventSubmissionTimestamp,'dd-MM-yyyy-hh:mmtt'), Created_By = Caller
+| distinct Created_On, VMName, Created_By
+| sort by Created_On desc

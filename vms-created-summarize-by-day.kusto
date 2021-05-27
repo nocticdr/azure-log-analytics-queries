@@ -1,0 +1,10 @@
+AzureActivity
+| where TimeGenerated > ago(7d)
+| where ResourceProvider == "Microsoft.Compute" and OperationName == "Create or Update Virtual Machine"
+| where HTTPRequest contains "PUT"
+| extend EventSubmissionTimestampHKT = EventSubmissionTimestamp + 8h
+| project VM_Name = Resource, Created_on = format_datetime(EventSubmissionTimestampHKT, 'dd-MM-yyyy'), Created_by = Caller
+| distinct Created_on, VM_Name , Created_by
+| summarize count() by Created_on, VM_Name, Created_by
+| sort by Created_on asc
+
