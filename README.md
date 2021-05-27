@@ -1,0 +1,1 @@
+# azure-log-analytics-queries
