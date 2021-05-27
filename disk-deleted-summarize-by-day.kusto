@@ -1,0 +1,8 @@
+AzureActivity
+| where TimeGenerated > ago(7d)
+| where ResourceProvider == "Microsoft.Compute" and OperationName == "Delete Disk"
+| where HTTPRequest contains "DELETE"
+| project Disk_Name = Resource, Deleted_On = format_datetime(EventSubmissionTimestamp, 'dd-MM-yyyy'), Deleted_By = Caller
+| distinct Deleted_On, Disk_Name, Deleted_By
+| summarize count() by Deleted_On, substring(Disk_Name,0,16)
+| sort by Deleted_On asc
