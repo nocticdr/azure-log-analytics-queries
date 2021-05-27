@@ -1,0 +1,9 @@
+AzureActivity
+| where TimeGenerated > ago(7d)
+| where ResourceProvider == "Microsoft.Compute" and OperationName == "Delete Virtual Machine"
+| where HTTPRequest contains "DELETE"
+| extend EventSubmissionTimestampHKT = EventSubmissionTimestamp + 8h
+| project VM_Name = Resource, Deleted_on = format_datetime(EventSubmissionTimestampHKT, 'dd-MM-yyyy'), Deleted_by = Caller
+| distinct Deleted_on, VM_Name, Deleted_by
+| summarize count() by Deleted_on, VM_Name, Deleted_by
+| sort by Deleted_on asc
