@@ -1,0 +1,5 @@
+AuditLogs
+| where TimeGenerated > ago(5m) //Change as required
+| where ActivityDisplayName has "Add app role assignment grant to user"
+| project Time = TimeGenerated, Activity = ActivityDisplayName, Application=parse_json(TargetResources)[0].displayName, User=parse_json(TargetResources)[1].userPrincipalName
+| where Application contains "myapp"
